@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+
+    <string name="app_name">Popular Movies</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="movie_popular">movie/popular</string>
+    <string name="movie_toprated">movie/top_rated</string>
+    <string name="original_title">\nOriginal Title :</string>
+    <string name="synopsis">\n\nSynopsis :</string>
+    <string name="rating">\n\nRating :</string>
+    <string name="release_date">\nRelease Date :</string>
+    <string name="no_data_error">An error occured, no data</string>
+    <string name="no_connection_error">An error occured, no internet connection</string>
+    <string name="list">list</string>
+
+
+</resources>
