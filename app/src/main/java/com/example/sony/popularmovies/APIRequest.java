@@ -25,6 +25,7 @@ public final class APIRequest {
     private static final String URL =
             "http://api.themoviedb.org/3/movie";
 
+    final static String apiKey="0ceacc7752513958d46588364114a210";
 
     public static URL buildUrl(String query) {
         Uri builtUri = Uri.parse(URL).buildUpon()
