@@ -95,7 +95,7 @@ private static final int LOADER_ID=25;
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<ArrayList<Movie>>(this) {
-            ArrayList<Movie> data;
+            //ArrayList<Movie> data;
             @Override
             public ArrayList<Movie> loadInBackground() {
                 String movie=args.getString("sort");
@@ -127,18 +127,18 @@ private static final int LOADER_ID=25;
                 if(args==null){
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                 }
-                if (data != null) {
-                    deliverResult(data);
-                } else {
-                    forceLoad();
-                }
+//                 if (data != null) {
+//                     deliverResult(data);
+//                 } else {
+//                     forceLoad();
+//                 }
             }
-            @Override
-            public void deliverResult(ArrayList<Movie> x) {
-                data=x;
-                super.deliverResult(x);
+//             @Override
+//             public void deliverResult(ArrayList<Movie> x) {
+//                 data=x;
+//                 super.deliverResult(x);
 
-            }
+//             }
         };
 
 
