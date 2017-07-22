@@ -29,7 +29,7 @@ import android.widget.Toast;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,MovieAdapter.MovieAdapterOnClickHandler,LoaderManager.LoaderCallbacks<ArrayList<Movie>>,SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,MovieAdapter.MovieAdapterOnClickHandler,LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
@@ -222,10 +222,5 @@ private static final int LOADER_ID=25;
     }
 
 //
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals("sort_method")){
-            loadMovieData(sharedPreferences.getString(key,""));
-        }
-    }
+    
 }
