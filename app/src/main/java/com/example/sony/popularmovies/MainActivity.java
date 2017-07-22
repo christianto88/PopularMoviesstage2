@@ -2,6 +2,7 @@ package com.example.sony.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -27,13 +29,16 @@ import android.widget.Toast;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,MovieAdapter.MovieAdapterOnClickHandler,LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,MovieAdapter.MovieAdapterOnClickHandler,LoaderManager.LoaderCallbacks<ArrayList<Movie>>,SharedPreferences.OnSharedPreferenceChangeListener {
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
 private static final int LOADER_ID=25;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+    private ArrayList<Movie> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +53,19 @@ private static final int LOADER_ID=25;
         mMovieAdapter = new MovieAdapter(this,getApplicationContext());
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-//        if (savedInstanceState != null) {
-//            String queryUrl = savedInstanceState.getParcelableArrayList(data);
-//
-//            mMovieAdapter.setMovieData().setText(queryUrl);
+
+        loadMovieData("top_rated");
+
+//     pref= PreferenceManager.getDefaultSharedPreferences(this);
+//        pref.registerOnSharedPreferenceChangeListener(this);if(pref.getString("sort_method","")==""){
+//            loadMovieData("popular");
 //        }
-        loadMovieData("popular");
+//        else {
+//            loadMovieData(pref.getString("sort_method",""));
+//        }
+
+
+
     }
 
     private void loadMovieData(String sort_category) {
@@ -95,7 +107,7 @@ private static final int LOADER_ID=25;
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<ArrayList<Movie>>(this) {
-            ArrayList<Movie> data;
+
             @Override
             public ArrayList<Movie> loadInBackground() {
                 String movie=args.getString("sort");
@@ -127,6 +139,7 @@ private static final int LOADER_ID=25;
                 if(args==null){
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                 }
+//                forceLoad();
                 if (data != null) {
                     deliverResult(data);
                 } else {
@@ -183,11 +196,16 @@ private static final int LOADER_ID=25;
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (R.id.top_rated==item.getItemId()){
+//            editor=pref.edit();
+//            editor.putString("sort_method","top_rated");
             loadMovieData("top_rated");
         }
         else if(R.id.popular==item.getItemId()){
+//            editor=pref.edit();
+//            editor.putString("sort_method","popular");
             loadMovieData("popular");
         }
+//        editor.apply();
         return false;
     }
 
@@ -203,5 +221,11 @@ private static final int LOADER_ID=25;
         return true;
     }
 
-
+//
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals("sort_method")){
+            loadMovieData(sharedPreferences.getString(key,""));
+        }
+    }
 }
