@@ -69,4 +69,13 @@ public class Movie  implements Serializable{
     }
 
     private String id;
+    private String favorite;
+
+    public String getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(String favorite) {
+        this.favorite = favorite;
+    }
 }

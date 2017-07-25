@@ -3,6 +3,7 @@ package com.example.sony.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,8 +30,9 @@ import android.widget.Toast;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,MovieAdapter.MovieAdapterOnClickHandler,LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,MovieAdapter.MovieAdapterOnClickHandler,LoaderManager.LoaderCallbacks<ArrayList<Movie>>,SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final String TAG ="ERROR" ;
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private TextView mErrorMessageDisplay;
@@ -54,7 +56,7 @@ private static final int LOADER_ID=25;
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        loadMovieData("top_rated");
+        loadMovieData("popular");
 
 //     pref= PreferenceManager.getDefaultSharedPreferences(this);
 //        pref.registerOnSharedPreferenceChangeListener(this);if(pref.getString("sort_method","")==""){
@@ -80,6 +82,9 @@ private static final int LOADER_ID=25;
             loaderManager.restartLoader(LOADER_ID, bundle, this);
         }
 
+    }
+    private void loadFavoritesData(){
+        showMovieDataView();
     }
     @Override
     public void onClick(Movie data) {
@@ -114,20 +119,40 @@ private static final int LOADER_ID=25;
                 if(movie==null|| TextUtils.isEmpty(movie)){
                     return null;
                 }
-                URL movieRequestUrl = APIRequest.buildUrl(movie);
+                else if(movie=="favorites"){
+                    try {
+                        Cursor x;
+                        x=getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                                null,
+                                null,
+                                null,
+                                null);
+                        ArrayList<Movie>z;
+                        z=CursorParser.parseCursor(x);
+                        return z;
 
-                try {
-                    String jsonMovieResponse = APIRequest
-                            .getResponseFromHttpUrl(movieRequestUrl);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to asynchronously load data.");
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+                else {
+                    URL movieRequestUrl = APIRequest.buildUrl(movie);
 
-                    ArrayList <Movie> simpleJsonMovieData = JSONParser
-                            .getSimpleMovieStringsFromJson(MainActivity.this, jsonMovieResponse);
+                    try {
+                        String jsonMovieResponse = APIRequest
+                                .getResponseFromHttpUrl(movieRequestUrl);
 
-                    return simpleJsonMovieData;
+                        ArrayList<Movie> simpleJsonMovieData = JSONParser
+                                .getSimpleMovieStringsFromJson(MainActivity.this, jsonMovieResponse);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
+                        return simpleJsonMovieData;
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
                 }
             }
 
@@ -139,19 +164,19 @@ private static final int LOADER_ID=25;
                 if(args==null){
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                 }
-//                forceLoad();
-                if (data != null) {
-                    deliverResult(data);
-                } else {
-                    forceLoad();
-                }
+                forceLoad();
+//                if (data != null) {
+//                    deliverResult(data);
+//                } else {
+//                    forceLoad();
+//                }
             }
-            @Override
-            public void deliverResult(ArrayList<Movie> x) {
-                data=x;
-                super.deliverResult(x);
-
-            }
+//            @Override
+//            public void deliverResult(ArrayList<Movie> x) {
+//                data=x;
+//                super.deliverResult(x);
+//
+//            }
         };
 
 
@@ -205,6 +230,10 @@ private static final int LOADER_ID=25;
 //            editor.putString("sort_method","popular");
             loadMovieData("popular");
         }
+        else if(R.id.favorites==item.getItemId()){
+//
+            loadMovieData("favorites");
+        }
 //        editor.apply();
         return false;
     }
@@ -222,5 +251,12 @@ private static final int LOADER_ID=25;
     }
 
 //
-    
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals("sort_method")){
+            loadMovieData(sharedPreferences.getString(key,""));
+        }
+    }
+
+
 }

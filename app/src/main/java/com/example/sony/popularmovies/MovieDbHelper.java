@@ -15,7 +15,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "movie.db";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     @Override
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_TABLE =
@@ -33,6 +33,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         MovieContract.MovieEntry.COLUMN_RELEASE_DATE   + " VARCHAR(100) NOT NULL, "                    +
 
                         MovieContract.MovieEntry.COLUMN_FAVORITE + " VARCHAR(10) NOT NULL, "        +
+                        MovieContract.MovieEntry.COLUMN_POSTER_PATH + " VARCHAR(100) NOT NULL, "        +
 
                         " UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
         db.execSQL(SQL_CREATE_TABLE);
